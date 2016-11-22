@@ -88,7 +88,7 @@ public class NiceView {
     }
 
     @WebMethod(operationName = "getHotels")
-    public ArrayList<HotelReservation> getHotels(@WebParam(name = "city") String city,
+    public HotelReservationWrapper getHotels(@WebParam(name = "city") String city,
             @WebParam(name = "arrival") Date arrival,
             @WebParam(name = "departure") Date departure) {
         ArrayList<HotelReservation> hotelListFiltered = new ArrayList<HotelReservation>();
@@ -102,7 +102,7 @@ public class NiceView {
             }
         }
 
-        return hotelListFiltered;
+        return new HotelReservationWrapper(hotelListFiltered);
     }
 
     // Booking nummeret burde være relateret til perioden som hotellet bliver booket
@@ -154,39 +154,7 @@ public class NiceView {
         }
         throw new Exception();
     }
-
-    public static class HotelReservation {
-
-        int bookingNumber;
-        Hotel hotel;
-        DateRange timePeriod;
-        boolean reserved;
-        CreditCardInfoType creditCardInfoType = null;
-
-        public HotelReservation(int bookingNumber, Hotel hotel, DateRange timePeriod, boolean reserved) {
-            this.bookingNumber = bookingNumber;
-            this.hotel = hotel;
-            this.timePeriod = timePeriod;
-            this.reserved = reserved;
-        }
-
-        public int getBookingNumber() {
-            return bookingNumber;
-        }
-
-        public Hotel getHotel() {
-            return hotel;
-        }
-
-        public DateRange getTimePeriod() {
-            return timePeriod;
-        }
-
-        public boolean isReserved() {
-            return reserved;
-        }
-
-    }
+  
 
     private boolean chargeCreditCard(int group, Fastmoney.CreditCardInfoType creditCardInfo, int amount, Fastmoney.AccountType account) throws CreditCardFaultMessage {
         // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
