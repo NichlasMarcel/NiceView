@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -88,7 +89,7 @@ public class NiceView {
     }
 
     @WebMethod(operationName = "getHotels")
-    public HotelReservationWrapper getHotels(@WebParam(name = "city") String city,
+    public ArrayList<HotelReservation> getHotels(@WebParam(name = "city") String city,
             @WebParam(name = "arrival") Date arrival,
             @WebParam(name = "departure") Date departure) {
         ArrayList<HotelReservation> hotelListFiltered = new ArrayList<HotelReservation>();
@@ -102,7 +103,7 @@ public class NiceView {
             }
         }
 
-        return new HotelReservationWrapper(hotelListFiltered);
+        return hotelListFiltered;
     }
 
     // Booking nummeret burde være relateret til perioden som hotellet bliver booket
@@ -113,7 +114,7 @@ public class NiceView {
         try {
             for (HotelReservation booking : bookings) {
                 int price = (int) (booking.timePeriod.Days() * booking.hotel.getPrice());
-                if (booking.bookingNumber == bookingNumber && !booking.reserved) {
+                if (booking.bookingNumber == bookingNumber) {
                     if (booking.hotel.isCreditcard() == true) {
                         // We expect it to validate if there is enough money on the account.
                         System.out.println("name: " + creditCardInfo.getName() + "\n price: " + price);
@@ -125,7 +126,6 @@ public class NiceView {
                     System.out.println("BN reservation: " + booking.bookingNumber);
                     System.out.println("BN Input: " + bookingNumber);
                     chargeCreditCard(groupNumber, creditCardInfo, price, niceViewAccount);
-                    booking.reserved = true;
                     booking.creditCardInfoType = creditCardInfo;
                     return true;
                 }
@@ -144,8 +144,7 @@ public class NiceView {
         // PT har hotellerne et booking nummer og det skal ændres så 
         // at reservationen har et booking nummer i stedet.
         for (HotelReservation res : bookings) {
-            if (res.bookingNumber == bookingNumber && res.reserved == true) {
-                res.reserved = false;
+            if (res.bookingNumber == bookingNumber) {
                 int price = (int) (res.timePeriod.Days() * res.hotel.getPrice());
                 refundCreditCard(groupNumber, res.creditCardInfoType, price, niceViewAccount);
                 return true;
