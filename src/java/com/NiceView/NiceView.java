@@ -28,14 +28,11 @@ public class NiceView {
     @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl")
     private BankService service;
 
-
-  
-
     /**
      * This is a sample web service operation
      */
     ArrayList<Hotel> hotelList = new ArrayList<Hotel>();
-    ArrayList<Reservation> bookings = new ArrayList<Reservation>();
+    ArrayList<HotelReservation> bookings = new ArrayList<HotelReservation>();
 
     int groupNumber = 23;
     AccountType niceViewAccount = new AccountType();
@@ -57,8 +54,8 @@ public class NiceView {
 //        Date arrival = new SimpleDateFormat("dd/MM/yyyy").parse("20/12/2016");
 //        Date departure = new SimpleDateFormat("dd/MM/yyyy").parse("01/12/2017");
         try {
-            Reservation copenhagen23122016;
-            copenhagen23122016 = new Reservation(
+            HotelReservation copenhagen23122016;
+            copenhagen23122016 = new HotelReservation(
                     1,
                     copenhagen,
                     new DateRange(
@@ -67,8 +64,8 @@ public class NiceView {
                     false
             );
 
-            Reservation amsterdam10112016;
-            amsterdam10112016 = new Reservation(
+            HotelReservation amsterdam10112016;
+            amsterdam10112016 = new HotelReservation(
                     3,
                     amsterdam,
                     new DateRange(
@@ -91,20 +88,17 @@ public class NiceView {
     }
 
     @WebMethod(operationName = "getHotels")
-    public ArrayList<Hotel> getHotels(@WebParam(name = "city") String city,
+    public ArrayList<HotelReservation> getHotels(@WebParam(name = "city") String city,
             @WebParam(name = "arrival") Date arrival,
             @WebParam(name = "departure") Date departure) {
-        ArrayList<Hotel> hotelListFiltered = new ArrayList<Hotel>();
-        hotelListFiltered.addAll(hotelList);
-
-        for (Reservation res : bookings) {
+        ArrayList<HotelReservation> hotelListFiltered = new ArrayList<HotelReservation>();
+        
+        for (HotelReservation res : bookings) {
             // Bestemt start og slut tidspunkt
-            if (!res.hotel.getAddress().equals(city)
-                    || !res.timePeriod.getStart().equals(arrival)
-                    || !res.timePeriod.getEnd().equals(departure)) {
-                if (hotelListFiltered.contains(res.hotel)) {
-                    hotelListFiltered.remove(res.hotel);
-                }
+            if (res.hotel.getAddress().equals(city)
+                    && res.timePeriod.getStart().equals(arrival)
+                    && res.timePeriod.getEnd().equals(departure)) {
+                hotelListFiltered.add(res);
             }
         }
 
@@ -117,7 +111,7 @@ public class NiceView {
     public Boolean bookHotel(@WebParam(name = "bookingNumber") int bookingNumber,
             @WebParam(name = "creditcard") CreditCardInfoType creditCardInfo) throws Exception {
         try {
-            for (Reservation booking : bookings) {
+            for (HotelReservation booking : bookings) {
                 int price = (int) (booking.timePeriod.Days() * booking.hotel.getPrice());
                 if (booking.bookingNumber == bookingNumber && !booking.reserved) {
                     if (booking.hotel.isCreditcard() == true) {
@@ -149,7 +143,7 @@ public class NiceView {
         // Tag et booking nummer og fjern reservationen
         // PT har hotellerne et booking nummer og det skal ændres så 
         // at reservationen har et booking nummer i stedet.
-        for (Reservation res : bookings) {
+        for (HotelReservation res : bookings) {
             if (res.bookingNumber == bookingNumber && res.reserved == true) {
                 res.reserved = false;
                 int price = (int) (res.timePeriod.Days() * res.hotel.getPrice());
@@ -161,7 +155,7 @@ public class NiceView {
         throw new Exception();
     }
 
-    public class Reservation {
+    public static class HotelReservation {
 
         int bookingNumber;
         Hotel hotel;
@@ -169,7 +163,7 @@ public class NiceView {
         boolean reserved;
         CreditCardInfoType creditCardInfoType = null;
 
-        public Reservation(int bookingNumber, Hotel hotel, DateRange timePeriod, boolean reserved) {
+        public HotelReservation(int bookingNumber, Hotel hotel, DateRange timePeriod, boolean reserved) {
             this.bookingNumber = bookingNumber;
             this.hotel = hotel;
             this.timePeriod = timePeriod;

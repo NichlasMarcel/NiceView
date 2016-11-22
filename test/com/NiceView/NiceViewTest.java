@@ -76,8 +76,8 @@ public class NiceViewTest {
         //instance.initialize();
 
         // Expects 1 result
-        ArrayList<Hotel> expResult = null;
-        ArrayList<Hotel> result = instance.getHotels(city, timePeriod.getStart(), timePeriod.getEnd());
+        ArrayList<NiceView.HotelReservation> expResult = null;
+        ArrayList<NiceView.HotelReservation> result = instance.getHotels(city, timePeriod.getStart(), timePeriod.getEnd());
         assertEquals(1, result.size());
 
         // Expects 0
