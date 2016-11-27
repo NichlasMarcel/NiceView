@@ -11,7 +11,7 @@ import com.NiceView.Hotel;
         public DateRange timePeriod;
         public CreditCardInfoType creditCardInfoType = null;
 
-        public HotelReservation(int bookingNumber, Hotel hotel, DateRange timePeriod, boolean reserved) {
+        public HotelReservation(int bookingNumber, Hotel hotel, DateRange timePeriod) {
             this.bookingNumber = bookingNumber;
             this.hotel = hotel;
             this.timePeriod = timePeriod;
@@ -28,4 +28,10 @@ import com.NiceView.Hotel;
         public DateRange getTimePeriod() {
             return timePeriod;
         }
+
+        public void setCreditCardInfoType(CreditCardInfoType creditCardInfoType) {
+            this.creditCardInfoType = creditCardInfoType;
+        }
+        
+        
  }

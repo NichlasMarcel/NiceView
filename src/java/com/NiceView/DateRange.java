@@ -14,7 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class DateRange {
 
-    private Date start, end;
+    private Date start;
+    private Date end;
 
     public DateRange(Date start, Date end) {
         this.start = start;

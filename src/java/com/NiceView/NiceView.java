@@ -26,6 +26,7 @@ import javax.xml.ws.WebServiceRef;
  */
 @WebService(serviceName = "NiceViewService")
 public class NiceView {
+
     @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl")
     private BankService service;
 
@@ -61,8 +62,18 @@ public class NiceView {
                     copenhagen,
                     new DateRange(
                             new SimpleDateFormat("dd/MM/yyyy").parse("15/12/2016"),
-                            new SimpleDateFormat("dd/MM/yyyy").parse("27/12/2016")),
-                    false
+                            new SimpleDateFormat("dd/MM/yyyy").parse("27/12/2016"))
+                    
+            );
+
+            HotelReservation copenhagen23122017;
+            copenhagen23122017 = new HotelReservation(
+                    4,
+                    copenhagen,
+                    new DateRange(
+                            new SimpleDateFormat("dd/MM/yyyy").parse("15/12/2016"),
+                            new SimpleDateFormat("dd/MM/yyyy").parse("27/12/2016"))
+                   
             );
 
             HotelReservation amsterdam10112016;
@@ -71,21 +82,36 @@ public class NiceView {
                     amsterdam,
                     new DateRange(
                             new SimpleDateFormat("dd/MM/yyyy").parse("10/11/2016"),
-                            new SimpleDateFormat("dd/MM/yyyy").parse("22/11/2016")),
-                    false
+                            new SimpleDateFormat("dd/MM/yyyy").parse("22/11/2016"))
+            );
+
+            HotelReservation amsterdam10112017;
+            amsterdam10112017 = new HotelReservation(
+                    7,
+                    amsterdam,
+                    new DateRange(
+                            new SimpleDateFormat("dd/MM/yyyy").parse("10/11/2016"),
+                            new SimpleDateFormat("dd/MM/yyyy").parse("22/11/2016"))
+            );
+
+            HotelReservation amsterdam10112018;
+            amsterdam10112018 = new HotelReservation(
+                    8,
+                    amsterdam,
+                    new DateRange(
+                            new SimpleDateFormat("dd/MM/yyyy").parse("10/11/2016"),
+                            new SimpleDateFormat("dd/MM/yyyy").parse("22/11/2016"))
             );
             hotelList.add(copenhagen);
             hotelList.add(amsterdam);
             bookings.add(copenhagen23122016);
+            bookings.add(copenhagen23122017);
             bookings.add(amsterdam10112016);
+            bookings.add(amsterdam10112017);
 
         } catch (Exception e) {
             //System.out.println("initialize: " + e.getMessage());
         }
-    }
-
-    private boolean isWithinRange(Date testDate, DateRange range) {
-        return !(testDate.before(range.getStart()) || testDate.after(range.getEnd()));
     }
 
     @WebMethod(operationName = "getHotels")
@@ -93,7 +119,7 @@ public class NiceView {
             @WebParam(name = "arrival") Date arrival,
             @WebParam(name = "departure") Date departure) {
         ArrayList<HotelReservation> hotelListFiltered = new ArrayList<HotelReservation>();
-        
+
         for (HotelReservation res : bookings) {
             // Bestemt start og slut tidspunkt
             if (res.hotel.getAddress().equals(city)
@@ -153,7 +179,6 @@ public class NiceView {
         }
         throw new Exception();
     }
-  
 
     private boolean chargeCreditCard(int group, Fastmoney.CreditCardInfoType creditCardInfo, int amount, Fastmoney.AccountType account) throws CreditCardFaultMessage {
         // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
@@ -175,8 +200,5 @@ public class NiceView {
         Fastmoney.BankPortType port = service.getBankPort();
         return port.validateCreditCard(group, creditCardInfo, amount);
     }
-
-
-  
 
 }
